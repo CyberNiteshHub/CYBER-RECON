@@ -22,6 +22,9 @@ Thumbs.db
 *.swp
 *.swo
 
+# Screenshot rename temp (if script interrupted)
+screenshots/_renaming_tmp/
+
 # Generated at runtime (optional — remove lines if you want to ship sample PDFs)
 # backend/report/*.pdf
 
