@@ -30,7 +30,7 @@
 
 </div>
 
-> **Screenshots:** Add your UI captures under [`screenshots/`](./screenshots/). After copying PNG files, run `python3 scripts/normalize_screenshots.py` from the repo root to rename them to `ui-01.png`, `ui-02.png`, … for a clean README gallery.
+> **Gallery:** [`screenshots/`](./screenshots/) — `ui-01.png` … `ui-43.png`. To add more PNGs later, run `python3 scripts/normalize_screenshots.py` from the repo root.
 
 ---
 
@@ -227,8 +227,8 @@ CYBER-RECON/
 │   └── CyberRecon_Presentation.pptx     # Slides (PowerPoint)
 │
 ├── 📂 screenshots/
-│   ├── README.md                # How to add / normalize images
-│   └── ui-01.png … ui-NN.png    # UI captures (run scripts/normalize_screenshots.py)
+│   ├── README.md                # Gallery notes
+│   └── ui-01.png … ui-43.png    # UI captures (43 images)
 │
 ├── 📂 scripts/
 │   └── normalize_screenshots.py # Renames PNGs to ui-01, ui-02, …
@@ -320,11 +320,15 @@ http://localhost:5000
 
 ## 📸 Screenshots & Output
 
-> Gallery files live in [`screenshots/`](./screenshots/) as `ui-01.png`, `ui-02.png`, … Add your PNGs there, then run `python3 scripts/normalize_screenshots.py` once so names stay consistent for README or portfolio links.
+**43 UI captures** in [`screenshots/`](./screenshots/) (`ui-01.png` … `ui-43.png`). Preview (first six — chronological):
 
-<!-- After you add images, you can embed them like:
-![Main UI](./screenshots/ui-01.png)
--->
+| | |
+|:--:|:--:|
+| ![ui-01](./screenshots/ui-01.png) | ![ui-02](./screenshots/ui-02.png) |
+| ![ui-03](./screenshots/ui-03.png) | ![ui-04](./screenshots/ui-04.png) |
+| ![ui-05](./screenshots/ui-05.png) | ![ui-06](./screenshots/ui-06.png) |
+
+*Remaining frames: `ui-07.png` through `ui-43.png` in the same folder.*
 
 Key outputs demonstrated on `cblu.ac.in` (CBLU University — authorized target):
 
