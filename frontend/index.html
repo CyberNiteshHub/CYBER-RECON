@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberRecon // AI-Powered OSINT</title>
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+
+    <div id="offline-overlay" class="offline-overlay">
+        <div class="offline-box">
+            <div class="offline-icon">⚠️</div>
+            <h2>CONNECTION LOST</h2>
+            <p>Internet access is unavailable. Tools paused.</p>
+            <div class="blinking-text">ATTEMPTING TO RECONNECT...</div>
+        </div>
+    </div>  
+
+    <div class="container">
+        <header>
+            <h1 class="glitch">CYBER RECON <span class="version">v1.0 AI-EDITION</span></h1>
+            <p class="subtitle">Next-Gen AI-Powered Automated Cyber Reconnaissance & Vulnerability Scanner</p>
+        </header>
+
+        <div class="control-panel">
+            <div class="input-group">
+                <label>TARGET (DOMAIN / IP)</label>
+                <input type="text" id="targetInput" placeholder="e.g., google.com or 192.168.0.1" autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label>SELECT TOOL</label>
+                <select id="toolSelect">
+                    <option value="ping">Ping Test (Latency Check)</option>
+                    <option value="geoip">GeoIP Satellite Mode</option>
+                    <option value="ssl">SSL/TLS Security Scanner</option>
+                    <option value="tech">Tech Stack Detector</option>
+                    <option value="admin">Hidden Admin Path Finder</option>
+                    <option value="whois">Whois Lookup (Registration Data)</option>
+                    <option value="dns">DNS Records (Deep Look)</option>
+                    <option value="traceroute">Traceroute (Geo-Trace)</option>
+                    <option value="headers">HTTP Headers Analysis</option>
+                    <option value="links">Page Link Extractor</option>
+                    <option value="subnet">Subnet Calculator</option>
+                    <option value="nmap">Nmap Deep Scan (Network Mapper)</option>
+                    <option value="sqli">🔐 SQL Injection Vulnerability Scanner</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button onclick="runTool()" class="btn-primary">⚡ RUN TOOL</button>
+            
+            <button onclick="analyzeWithAI()" class="btn-ai" id="btnAI" disabled>🧠 ANALYZE WITH AI</button>
+            
+            <button onclick="downloadReport()" class="btn-secondary" id="btnReport" disabled>📄 REPORT</button>
+            <button onclick="runFullScan()" class="btn-danger">☢️ FULL RECON</button>
+        </div>
+
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="title">bash -- scan_output</span>
+            </div>
+            <div class="terminal-body">
+                <pre id="outputArea">Waiting for command input...</pre>
+            </div>
+        </div>
+
+        <div id="ai-panel" class="ai-container" style="display: none;">
+            <div class="ai-header-bar">
+                <div style="display: flex; align-items: center;">
+                    <span class="ai-icon">🤖</span>
+                    <span class="ai-title">GEMINI INTELLIGENCE REPORT</span>
+                </div>
+                
+                <div class="voice-controls">
+                    <button id="btnSpeak" onclick="playVoice()" class="btn-voice" title="Listen Explanation (Hindi)">
+                        🔊 LISTEN
+                    </button>
+                    <button id="btnStop" onclick="stopVoice()" class="btn-voice btn-stop" style="display: none;" title="Stop Voice">
+                        ⏹ STOP
+                    </button>
+                    <div id="voiceWave" class="voice-wave" style="display: none;">
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ai-body-content">
+                <pre id="aiOutput">Initializing Neural Network... Connecting to AI...</pre>
+            </div>
+        </div>
+
+        <div id="geo-visuals" class="geo-container" style="display: none;">
+            <div class="geo-info-panel">
+                <div class="info-box">
+                    <h3>📍 DETECTED ADDRESS</h3>
+                    <p id="geoAddress">Scanning location data...</p>
+                </div>
+                <div class="info-box">
+                    <h3>🔗 LIVE MAP LINK</h3>
+                    <div class="link-wrapper">
+                        <input type="text" id="geoLink" readonly>
+                        <button onclick="copyGeoLink()" class="btn-copy">COPY</button>
+                    </div>
+                </div>
+            </div>
+            <div id="map"></div>
+        </div>
+
+        <!-- FLOATING ANALYTICS BUTTON - BOTTOM RIGHT -->
+        <a href="/dashboard.html" target="_blank" class="btn-floating-analytics" title="View Scan History & Analytics">
+            <span class="analytics-icon">📊</span>
+            <span class="analytics-text">LIVE ANALYTICS</span>
+        </a>
+
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+flask
+requests
+beautifulsoup4
+dnspython
+reportlab
+python-nmap
+urllib3
+google-generativeai
+sqlmap
+python-dotenv

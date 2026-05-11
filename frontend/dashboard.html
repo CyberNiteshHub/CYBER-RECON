@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberRecon - Scan Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0e27;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+        }
+        
+        .dashboard-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid #00ff41;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #0099ff;
+            font-size: 0.9em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #1a1f3a 0%, #16213e 100%);
+            border: 2px solid #00ff41;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            color: #0099ff;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .value {
+            font-size: 2.5em;
+            color: #00ff41;
+            font-weight: bold;
+        }
+        
+        .stat-card.high { border-color: #ff0000; }
+        .stat-card.medium { border-color: #ffaa00; }
+        .stat-card.low { border-color: #00ff41; }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: #00ff41;
+            color: #0a0e27;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #0099ff;
+            color: #fff;
+            box-shadow: 0 0 10px #0099ff;
+        }
+        
+        .btn.danger {
+            background: #ff0000;
+            color: #fff;
+        }
+        
+        .btn.danger:hover {
+            background: #cc0000;
+        }
+        
+        .search-box {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px;
+            background: #1a1f3a;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .scans-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1a1f3a;
+            border: 2px solid #00ff41;
+            margin-top: 20px;
+        }
+        
+        .scans-table thead {
+            background: #0f1629;
+            border-bottom: 2px solid #00ff41;
+        }
+        
+        .scans-table th {
+            color: #00ff41;
+            padding: 15px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        
+        .scans-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #00ff41;
+            color: #00ff41;
+        }
+        
+        .scans-table tr:hover {
+            background: #16213e;
+        }
+        
+        .severity-badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+        
+        .severity-high {
+            background: #ff0000;
+            color: #fff;
+        }
+        
+        .severity-medium {
+            background: #ffaa00;
+            color: #000;
+        }
+        
+        .severity-low {
+            background: #00ff41;
+            color: #000;
+        }
+        
+        .tool-badge {
+            background: #0099ff;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #0099ff;
+        }
+        
+        .spinner {
+            border: 3px solid #00ff41;
+            border-top: 3px solid #0099ff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #0099ff;
+            font-size: 1.1em;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            border-top: 2px solid #00ff41;
+            color: #0099ff;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>🔒 CYBER RECON DASHBOARD</h1>
+            <p>Real-time Vulnerability Scan History & Analytics</p>
+        </div>
+        
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <h3>Total Scans</h3>
+                <div class="value" id="totalScans">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Vulnerabilities</h3>
+                <div class="value" id="totalVulns">0</div>
+            </div>
+            <div class="stat-card high">
+                <h3>High Risk</h3>
+                <div class="value" id="highRisk">0</div>
+            </div>
+            <div class="stat-card medium">
+                <h3>Medium Risk</h3>
+                <div class="value" id="mediumRisk">0</div>
+            </div>
+            <div class="stat-card low">
+                <h3>Low Risk</h3>
+                <div class="value" id="lowRisk">0</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <input type="text" class="search-box" id="searchBox" placeholder="Search target...">
+            <button class="btn" onclick="exportToJSON()">📥 Export JSON</button>
+            <button class="btn" onclick="exportToCSV()">📊 Export CSV</button>
+            <button class="btn danger" onclick="clearDatabase()">🗑️ Clear All</button>
+        </div>
+        
+        <div id="loadingContainer" class="loading" style="display:none;">
+            <div class="spinner"></div>
+            <p>Loading scans from Firebase...</p>
+        </div>
+        
+        <table class="scans-table" id="scansTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Target</th>
+                    <th>Tool</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Vulns</th>
+                    <th>Severity</th>
+                </tr>
+            </thead>
+            <tbody id="scansBody"></tbody>
+        </table>
+        
+        <div class="no-data" id="noDataContainer" style="display:none;">
+            📭 No scans found. Start scanning to see results here!
+        </div>
+        
+        <div class="footer">
+            <p>🔐 CyberRecon Dashboard | Real-time vulnerability tracking | Powered by Firebase</p>
+        </div>
+    </div>
+    
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDjXu8tZRwUeQ47Bh21FC_wPvonv8lbgi0",
+            authDomain: "cyber-recon-d9bd3.firebaseapp.com",
+            databaseURL: "https://cyber-recon-d9bd3-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "cyber-recon-d9bd3",
+            storageBucket: "cyber-recon-d9bd3.firebasestorage.app",
+            messagingSenderId: "872571649806",
+            appId: "1:872571649806:web:8ec087ba4f9730a607a15f",
+            measurementId: "G-HKJ7ZFZ0ST"
+        };
+        
+        // Initialize Firebase
+        const initFirebase = async () => {
+            try {
+                await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js').then(module => {
+                    const { initializeApp } = module;
+                    firebase = { app: initializeApp(firebaseConfig) };
+                });
+                
+                await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js').then(module => {
+                    const { getDatabase, ref, onValue } = module;
+                    firebase.db = getDatabase();
+                    firebase.ref = ref;
+                    firebase.onValue = onValue;
+                    
+                    loadScans();
+                });
+            } catch (e) {
+                console.error("Firebase init error:", e);
+                loadScansWithFetch();
+            }
+        };
+        
+        let allScans = {};
+        
+        function loadScans() {
+            document.getElementById('loadingContainer').style.display = 'block';
+            document.getElementById('scansTable').style.display = 'none';
+            document.getElementById('noDataContainer').style.display = 'none';
+            
+            try {
+                const scansRef = firebase.ref(firebase.db, 'scans');
+                firebase.onValue(scansRef, (snapshot) => {
+                    allScans = snapshot.val() || {};
+                    console.log("[✓] Data loaded from Firebase:", allScans);
+                    displayScans(allScans);
+                    updateStats(allScans);
+                    document.getElementById('loadingContainer').style.display = 'none';
+                });
+            } catch (e) {
+                console.error("Load error:", e);
+                loadScansWithFetch();
+            }
+        }
+        
+        function loadScansWithFetch() {
+            fetch('https://cyber-recon-d9bd3-default-rtdb.asia-southeast1.firebasedatabase.app/scans.json')
+                .then(res => res.json())
+                .then(data => {
+                    allScans = data || {};
+                    console.log("[✓] Data loaded via REST:", allScans);
+                    displayScans(allScans);
+                    updateStats(allScans);
+                    document.getElementById('loadingContainer').style.display = 'none';
+                })
+                .catch(e => {
+                    console.error("Fetch error:", e);
+                    document.getElementById('loadingContainer').style.display = 'none';
+                    document.getElementById('noDataContainer').style.display = 'block';
+                });
+        }
+        
+        function displayScans(scans) {
+            const tbody = document.getElementById('scansBody');
+            tbody.innerHTML = '';
+            
+            if (Object.keys(scans).length === 0) {
+                document.getElementById('noDataContainer').style.display = 'block';
+                document.getElementById('scansTable').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('scansTable').style.display = 'table';
+            document.getElementById('noDataContainer').style.display = 'none';
+            
+            Object.entries(scans).reverse().forEach(([scanId, scanData]) => {
+                const row = tbody.insertRow();
+                const severity = scanData.severity_high > 0 ? 'high' : scanData.severity_medium > 0 ? 'medium' : 'low';
+                const severityBadge = `<span class="severity-badge severity-${severity}">${severity.toUpperCase()}</span>`;
+                
+                row.innerHTML = `
+                    <td>${scanData.target || 'N/A'}</td>
+                    <td><span class="tool-badge">${scanData.tool || 'N/A'}</span></td>
+                    <td>${scanData.scan_date || 'N/A'}</td>
+                    <td>${scanData.scan_time || 'N/A'}</td>
+                    <td>${scanData.vulnerability_count || 0}</td>
+                    <td>${severityBadge}</td>
+                `;
+            });
+        }
+        
+        function updateStats(scans) {
+            let totalScans = Object.keys(scans).length;
+            let totalVulns = 0, highRisk = 0, mediumRisk = 0, lowRisk = 0;
+            
+            Object.values(scans).forEach(scan => {
+                totalVulns += scan.vulnerability_count || 0;
+                highRisk += scan.severity_high || 0;
+                mediumRisk += scan.severity_medium || 0;
+                lowRisk += scan.severity_low || 0;
+            });
+            
+            document.getElementById('totalScans').textContent = totalScans;
+            document.getElementById('totalVulns').textContent = totalVulns;
+            document.getElementById('highRisk').textContent = highRisk;
+            document.getElementById('mediumRisk').textContent = mediumRisk;
+            document.getElementById('lowRisk').textContent = lowRisk;
+        }
+        
+        document.getElementById('searchBox').addEventListener('keyup', (e) => {
+            const search = e.target.value.toLowerCase();
+            const filtered = Object.fromEntries(
+                Object.entries(allScans).filter(([_, scan]) => 
+                    (scan.target || '').toLowerCase().includes(search) || 
+                    (scan.tool || '').toLowerCase().includes(search)
+                )
+            );
+            displayScans(filtered);
+        });
+        
+        function exportToJSON() {
+            const json = JSON.stringify(allScans, null, 2);
+            downloadFile(json, 'scans-export.json', 'application/json');
+        }
+        
+        function exportToCSV() {
+            let csv = 'Target,Tool,Date,Time,Vulnerabilities,Severity_High,Severity_Medium,Severity_Low\n';
+            Object.values(allScans).forEach(scan => {
+                csv += `${scan.target},"${scan.tool}",${scan.scan_date},${scan.scan_time},${scan.vulnerability_count},${scan.severity_high},${scan.severity_medium},${scan.severity_low}\n`;
+            });
+            downloadFile(csv, 'scans-export.csv', 'text/csv');
+        }
+        
+        function downloadFile(content, filename, type) {
+            const element = document.createElement('a');
+            element.setAttribute('href', `data:${type};charset=utf-8,${encodeURIComponent(content)}`);
+            element.setAttribute('download', filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+        
+        function clearDatabase() {
+            if (confirm('Are you sure? This will delete ALL scan records!')) {
+                fetch('https://cyber-recon-d9bd3-default-rtdb.asia-southeast1.firebasedatabase.app/scans.json', {
+                    method: 'DELETE'
+                }).then(() => {
+                    allScans = {};
+                    displayScans(allScans);
+                    updateStats(allScans);
+                });
+            }
+        }
+        
+        // Load on page load
+        window.addEventListener('load', initFirebase);
+    </script>
+</body>
+</html>
