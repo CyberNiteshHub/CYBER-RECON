@@ -98,7 +98,7 @@ In the modern digital landscape, cybersecurity has become one of the most critic
 
 ## 🛠️ 13 Scanning Modules
 
-| # | Module | Description |
+| Sr No. | Module | Description |
 |---|--------|-------------|
 | 01 | 🌐 **Ping Test** | ICMP latency check — round-trip time, packet loss, network reachability |
 | 02 | 🛰️ **GeoIP Satellite Mode** | Resolves IP, retrieves country, city, ISP, ASN & coordinates |
